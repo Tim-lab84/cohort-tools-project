@@ -5,6 +5,8 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
 
+const errorHandler = require("./middleware/errorHandler"); // Import error middleware
+
 const PORT = process.env.PORT || 5005;
 
 // INITIALIZE EXPRESS APP
@@ -22,7 +24,7 @@ app.use(
   })
 );
 
-// 🔹 Connect to MongoDB
+// CONNECT TO MONGODB
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -31,53 +33,21 @@ mongoose
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// 🔹 Import Models (to be created)
-const Student = require("./models/Student");
-const Cohort = require("./models/Cohort");
+// IMPORT ROUTES
+const studentRoutes = require("./routes/students");
+const cohortRoutes = require("./routes/cohorts");
 
-// 🔹 API Routes
-app.get("/api/students", async (req, res) => {
-  try {
-    const students = await Student.find();
-    res.json(students);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching students", error });
-  }
-});
+// USE ROUTES
+app.use("/api/students", studentRoutes);
+app.use("/api/cohorts", cohortRoutes);
 
-app.get("/api/cohorts", async (req, res) => {
-  try {
-    const cohorts = await Cohort.find();
-    res.json(cohorts);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching cohorts", error });
-  }
-});
-
-// Serve Docs Page
+// SERVE DOCUMENTATION PAGE
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
 
-//MODEL ROUTES
-app.get("/api/cohorts", async (req, res) => {
-  try {
-    const cohorts = await Cohort.find();
-    res.json(cohorts);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching cohorts", error });
-  }
-});
-
-//students model
-app.get("/api/students", async (req, res) => {
-  try {
-    const students = await Student.find().populate("cohort"); // Populate cohort details !!!!!!
-    res.json(students);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching students", error });
-  }
-});
+// ERROR HANDLING MIDDLEWARE (MUST BE AT THE END)
+app.use(errorHandler);
 
 // START SERVER
 app.listen(PORT, () => {
