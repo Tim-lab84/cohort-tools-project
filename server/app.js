@@ -46,8 +46,8 @@ app.use("/api/students", studentRoutes);
 app.use("/api/cohorts", cohortRoutes);
 
 // AUTH ROUTES (Login, Signup, Verify)
-app.use("/auth", authRoutes);  // Register auth routes under '/auth'
-app.use("/api", userRoutes);   // Register user route (for user info) under '/api'
+app.use("/auth", authRoutes);  
+app.use("/api", userRoutes);   
 
 // SERVE DOCUMENTATION PAGE
 app.get("/docs", (req, res) => {
