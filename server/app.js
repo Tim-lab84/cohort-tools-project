@@ -7,6 +7,10 @@ require("dotenv").config();
 
 const errorHandler = require("./middleware/errorHandler"); // Import error middleware
 
+// Import Auth Routes
+const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes"); // Import the user routes
+
 const PORT = process.env.PORT || 5005;
 
 // INITIALIZE EXPRESS APP
@@ -40,6 +44,10 @@ const cohortRoutes = require("./routes/cohorts");
 // USE ROUTES
 app.use("/api/students", studentRoutes);
 app.use("/api/cohorts", cohortRoutes);
+
+// AUTH ROUTES (Login, Signup, Verify)
+app.use("/auth", authRoutes);  // Register auth routes under '/auth'
+app.use("/api", userRoutes);   // Register user route (for user info) under '/api'
 
 // SERVE DOCUMENTATION PAGE
 app.get("/docs", (req, res) => {
